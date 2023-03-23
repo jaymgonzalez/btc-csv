@@ -14,11 +14,14 @@ jobs:
     steps:
       - name: Checkout current repository to main branch
         uses: actions/checkout@v3.3.0
-      - uses: actions/setup-python@v4
+      - name: Install Python 3.9
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
           cache: 'pip'
       - run: pip install -r requirements.txt
+      - name: Run main script
+        run: python main.py
       # - name: Cache dependencies and build outputs to improve workflow execution time.
       #   uses: actions/cache@v3
       #   with:
