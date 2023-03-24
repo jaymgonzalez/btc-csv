@@ -1,44 +1,36 @@
 import pandas as pd
-import pandas_ta as ta
 from scipy.signal import savgol_filter
 from scipy.signal import find_peaks
-from binance.client import Client
 
-client = Client()
+df = pd.read_csv('1h.csv', index_col=0)
 
+df["close_smooth"] = savgol_filter(df.close, 49, 5)
 
-# ETH
-klines = client.get_historical_klines("ETHUSDT", Client.KLINE_INTERVAL_1HOUR, "6 months ago UTC")
+atr = df.atr.iloc[-1]
 
-# BTC
-
-df = pd.DataFrame(klines, columns = ["open_time", "open", "high", "low", "close", "vol", "close_time", "quote_vol", \
-                                    "trades", "taker_base_vol", "taker_quote_vol", "ignore"])
-
-df = df[["open_time","open", "high", "low", "close"]]
-
-df["open_time"] = pd.to_datetime(df["open_time"], unit="ms")
-
-df["open"] = df.open.astype(float)
-df["high"] = df.high.astype(float)
-df["low"] = df.low.astype(float)
-df["close"] = df.close.astype(float)
-
-## take the rolling atr so the yaxis doesn't shake too much
-df["atr"] = ta.atr(high=df.high, low=df.low, close=df.close)
-df["atr"] = df.atr.rolling(window=30).mean()
-
-df.set_index("open_time", inplace=True)
-
-df2 = df
-
-df2["close_smooth"] = savgol_filter(df2.close, 49, 5)
-
-atr = df2.atr.iloc[-1]
-
-peaks_idx, _ = find_peaks(df2.close_smooth, distance=15, width=3, prominence=atr)
-troughs_idx, _ = find_peaks(-1*df2.close_smooth, distance=15, width=3, prominence=atr)
+peaks_idx, _ = find_peaks(df.close_smooth, distance=15, width=3, prominence=atr)
+troughs_idx, _ = find_peaks(-1*df.close_smooth, distance=15, width=3, prominence=atr)
 
 
-print(peaks_idx)
-print(troughs_idx)
+# print(peaks_idx)
+# print(troughs_idx)
+
+# Create a new column in the DataFrame called "position"
+df['position'] = 0
+
+# Set position values based on long and short signals
+df['position'].iloc[peaks_idx] = -1
+df['position'].iloc[troughs_idx] = 1
+
+# Adjust the position column to hold the most recent position until there is a signal to go in the other direction
+prev_pos = 0
+for i in range(len(df)):
+    if df.iloc[i]['position'] != 0:
+        prev_pos = df.iloc[i]['position']
+    else:
+        df.iloc[i, df.columns.get_loc('position')] = prev_pos
+
+df.to_csv('1h.csv')
+
+# print(df.tail(50))
+

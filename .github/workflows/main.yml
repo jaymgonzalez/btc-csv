@@ -1,11 +1,11 @@
-name: README build
+name: RUN calculations
 
 on:
   push:
     branches:
       - main
-  schedule:
-    - cron: '0 * * * *'
+  # schedule:
+  #   - cron: '0 * * * *'
 
 jobs:
   build:
@@ -21,7 +21,7 @@ jobs:
           cache: 'pip'
       - run: pip install -r requirements.txt
       - name: Run main script
-        run: python
+        run: python main.py
       # - name: Cache dependencies and build outputs to improve workflow execution time.
       #   uses: actions/cache@v3
       #   with:
