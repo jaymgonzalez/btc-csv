@@ -7,11 +7,13 @@ cd $dir
 # Activate the virtual environment
 source ./bin/activate
 
+cd btc-csv
+
 # Get updated repo
 git pull
 
 # Run your Python file
-python ./btc-csv/download_data.py
+python download_data.py
 
 # Create a commit with a message indicating the changes made
 git commit -am "Automated commit $(date)"
