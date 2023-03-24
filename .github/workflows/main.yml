@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - main
-  # schedule:
-  #   - cron: '0 * * * *'
+
 permissions:
   contents: write
 
@@ -25,24 +24,9 @@ jobs:
       - name: Run main script
         run: python main.py
       - name: Commit and Push new CSV to the repository
-        # uses: mikeal/publish-to-github-action@master
-        # env:
-        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        #   BRANCH_NAME: 'main'
-
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
           git add 1h.csv
           git commit -m "Update 1h.csv"
           git push origin main
-
-    #     # - name: Cache dependencies and build outputs to improve workflow execution time.
-    #     #   uses: actions/cache@v3
-    #     #   with:
-    #     #     path: node_modules
-    #     #     key: ${{ runner.os }}-js-${{ hashFiles('package-lock.json') }}
-    #     # - name: Install dependencies
-    #     #   run: npm install
-    #     # - name: Generate README file
-    #     #   run: node index.js
