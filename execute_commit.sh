@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Activate the virtual environment
+source /home/jay-server-ventas/workspace/bot/bin/activate
+
 # Get updated repo
 git pull
 
