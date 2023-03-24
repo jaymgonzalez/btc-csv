@@ -1,13 +1,17 @@
 #!/bin/bash
 
+dir=/home/jay-server-ventas/workspace/bot
+
+cd $dir
+
 # Activate the virtual environment
-source /home/jay-server-ventas/workspace/bot/bin/activate
+source ./bin/activate
 
 # Get updated repo
 git pull
 
 # Run your Python file
-python download_data.py
+python ./btc-csv/download_data.py
 
 # Create a commit with a message indicating the changes made
 git commit -am "Automated commit $(date)"
