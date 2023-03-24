@@ -1,16 +1,16 @@
-from binance.client import Client
+import yfinance as yf
 import pandas as pd
 import pandas_ta as ta
 from scipy.signal import savgol_filter
 from scipy.signal import find_peaks
+import time
 
-client = Client()
 
 # ETH
 # klines = client.get_historical_klines("ETHUSDT", Client.KLINE_INTERVAL_1HOUR, "6 months ago UTC")
 
 # BTC
-klines = client.get_historical_klines("BTCUSDT", Client.KLINE_INTERVAL_1HOUR, "6 months ago UTC")
+data = yf.download('BTC-USD', start='2023-01-01', end=None, interval='1h')
 
 df = pd.DataFrame(klines, columns = ["open_time", "open", "high", "low", "close", "vol", "close_time", "quote_vol", \
                                     "trades", "taker_base_vol", "taker_quote_vol", "ignore"])
