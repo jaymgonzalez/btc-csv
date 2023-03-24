@@ -1,6 +1,6 @@
 # matplotlib==3.5.2
 pandas==1.4.3
 pandas-ta==0.3.14b0
-python-binance==1.0.17
+# python-binance==1.0.17
 scipy==1.8.1
 # yfinance==0.2.13
