@@ -14,3 +14,6 @@ git commit -am "Automated commit $(date)"
 
 # Push the changes to GitHub
 git push origin main
+
+# Deactivate the virtual environment
+deactivate
