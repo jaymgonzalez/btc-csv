@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Get updated repo
+git pull
+
 # Run your Python file
 python download_data.py
 
