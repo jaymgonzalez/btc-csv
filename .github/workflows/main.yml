@@ -24,7 +24,12 @@ jobs:
       - name: Run main script
         run: python main.py
       - name: Run bybit script
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+          API_SECRET: ${{ secrets.API_SECRET }}
+
         run: python exchange_actions.py
+
       - name: Commit and Push new CSV to the repository
         run: |
           git config --global user.email "actions@github.com"
