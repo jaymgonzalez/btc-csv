@@ -36,9 +36,13 @@ def HTTP_Request(endPoint,method,payload,Info):
         response = httpClient.request(method, url+endPoint, headers=headers, data=payload)
     else:
         response = httpClient.request(method, url+endPoint+"?"+payload, headers=headers)
-    print(url+endPoint+"?"+payload)
+    # print(url+endPoint+"?"+payload)
     print(response.text)
     print(Info + " Response Time : " + str(response.elapsed))
+    if response.text["retMsg"] == "OK":
+        return response.text
+    else: 
+        ValueError(response.txt)
 
 def genSignature(payload):
     param_str= str(time_stamp) + test_api_key + recv_window + payload
