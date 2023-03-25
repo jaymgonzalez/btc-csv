@@ -30,4 +30,4 @@ class SpotManager:
 spot_manager = SpotManager(api_key, api_secret, is_testnet=False)
 data = spot_manager.session.get_wallet_balance()
 
-print(data + "test")
+print(data)
