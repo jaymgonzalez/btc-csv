@@ -36,6 +36,6 @@ class SpotManager:
         )
 
 spot_manager = SpotManager(api_key, api_secret, is_testnet=False)
-data = spot_manager.session.get_account_info()
+data = spot_manager.session.wal
 
 print(data)

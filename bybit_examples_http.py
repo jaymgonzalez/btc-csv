@@ -5,6 +5,7 @@ import hmac
 import uuid
 import configparser
 import os
+import json
 
 
 config = configparser.ConfigParser()
@@ -37,9 +38,9 @@ def HTTP_Request(endPoint,method,payload,Info):
     else:
         response = httpClient.request(method, url+endPoint+"?"+payload, headers=headers)
     # print(url+endPoint+"?"+payload)
-    print(response.text)
     print(Info + " Response Time : " + str(response.elapsed))
-    if response.text["retMsg"] == "OK":
+    # print(response.status_code)
+    if response.status_code == 200:
         return response.text
     else: 
         ValueError(response.txt)
@@ -58,13 +59,35 @@ def createOrder():
     params='{"category":"linear","symbol":"BTCUSDT","orderType":"Market","side":"Buy","orderLinkId":"' +  orderLinkId + '","qty":"0.1","timeInForce":"GTC"}';
     HTTP_Request(endpoint,method,params,"Create")
     
-def walletBalance(coin = 'USDT'):
-    endpoint="/v5/account/wallet-balance"
+def walletBalance(coin='USDT',accType='CONTRACT'):
+    endpoint="/v5/asset/transfer/query-account-coin-balance"
     method="GET"
-    params=f'accountType=SPOT&coin={coin}';
-    HTTP_Request(endpoint,method,params,"Balance")
+    params=f'accountType={accType}&coin={coin}';
+    response = json.loads(HTTP_Request(endpoint,method,params,"Balance"))
+    return response['result']['balance']['walletBalance']
 
-walletBalance('BTC')
+# walletBalance()
+
+def openPosition(symbol='BTCUSDT'):
+    endpoint="/v5/position/list"
+    method="GET"
+    params=f'category=linear&symbol={symbol}';
+    response = json.loads(HTTP_Request(endpoint,method,params,"Orders"))
+    # print(response['result']['balance']['walletBalance'])
+    print(response)
+
+# openPosition()
+
+def openPositionId(symbol='BTCUSDT'):
+    endpoint="/v5/order/history"
+    method="GET"
+    params=f'category=linear&symbol={symbol}';
+    response = json.loads(HTTP_Request(endpoint,method,params,"ID"))
+    # print(response['result']['list'][0]['orderLinkId'])
+    return response['result']['list'][0]['orderLinkId']
+
+# openPositionId()
+
 #Create Order
 
 # #Get Order List
