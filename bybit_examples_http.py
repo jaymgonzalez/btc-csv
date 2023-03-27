@@ -39,7 +39,7 @@ def HTTP_Request(endPoint,method,payload,Info):
         response = httpClient.request(method, url+endPoint+"?"+payload, headers=headers)
     # print(url+endPoint+"?"+payload)
     print(Info + " Response Time : " + str(response.elapsed))
-    # print(response.status_code)
+    # print(response.text)
     if response.status_code == 200:
         return response.text
     else: 
@@ -58,6 +58,8 @@ def createOrder():
     orderLinkId=uuid.uuid4().hex
     params='{"category":"linear","symbol":"BTCUSDT","orderType":"Market","side":"Buy","orderLinkId":"' +  orderLinkId + '","qty":"0.1","timeInForce":"GTC"}';
     HTTP_Request(endpoint,method,params,"Create")
+
+# createOrder()
     
 def walletBalance(coin='USDT',accType='CONTRACT'):
     endpoint="/v5/asset/transfer/query-account-coin-balance"
@@ -66,7 +68,8 @@ def walletBalance(coin='USDT',accType='CONTRACT'):
     response = json.loads(HTTP_Request(endpoint,method,params,"Balance"))
     return response['result']['balance']['walletBalance']
 
-# walletBalance()
+# data = walletBalance()
+# print(data)
 
 def openPosition(symbol='BTCUSDT'):
     endpoint="/v5/position/list"
@@ -76,18 +79,48 @@ def openPosition(symbol='BTCUSDT'):
     # print(response['result']['balance']['walletBalance'])
     print(response)
 
-# openPosition()
+openPosition()
 
-def openPositionId(symbol='BTCUSDT'):
+def openPositionQty(symbol='BTCUSDT'):
     endpoint="/v5/order/history"
     method="GET"
     params=f'category=linear&symbol={symbol}';
-    response = json.loads(HTTP_Request(endpoint,method,params,"ID"))
+    response = json.loads(HTTP_Request(endpoint,method,params,"qty"))
     # print(response['result']['list'][0]['orderLinkId'])
-    return response['result']['list'][0]['orderLinkId']
+    return response['result']['list'][0]['qty']
 
-# openPositionId()
+# openPositionQty()
 
+def closePosition(symbol='BTCUSDT'):
+    qty = openPositionQty(symbol)
+    endpoint="/contract/v3/private/order/create"
+    method="POST"
+    # params='{"category":"linear","symbol":"' + symbol + '","orderType":"Market","side":"Sell","orderLinkId":"' +  id + '","qty":"0.1","timeInForce":"GTC"}';
+    # print(id)
+    params='{"category":"linear","symbol":"' + symbol + '","orderType":"Market","qty":"' + qty + '","reduceOnly":"true","side":"Sell"}';
+    HTTP_Request(endpoint,method,params,"Close")
+    print('Position closed!')
+
+# closePosition()
+
+def coinQty(totalPercentage=99):
+    coinPrice = float(getLatestPrice())
+    balance = float(walletBalance())
+    available = balance * (totalPercentage / 100)
+    qty = available / coinPrice
+    return round(qty, 4)
+
+def getLatestPrice(symbol='BTCUSDT'):
+    endpoint="/v5/market/kline"
+    method="GET"
+    params=f'category=linear&symbol={symbol}&interval=1&limit=1';
+    response = json.loads(HTTP_Request(endpoint,method,params,"price"))
+    # print(response['result']['list'][0]['orderLinkId'])
+    return response['result']['list'][0][4]
+
+# getLatestPrice()
+
+# print(coinQty())
 #Create Order
 
 # #Get Order List

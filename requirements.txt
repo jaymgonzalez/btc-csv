@@ -4,4 +4,4 @@ pandas-ta==0.3.14b0
 # python-binance==1.0.17
 scipy==1.8.1
 # yfinance==0.2.13
-pybit==2.4.1
+# pybit==2.4.1
