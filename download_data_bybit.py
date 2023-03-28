@@ -35,5 +35,3 @@ df["atr"] = df.atr.rolling(window=30).mean()
 df.to_csv('1h_bybit.csv')
 
 addPosition('1h_bybit.csv')
-
-print(df)

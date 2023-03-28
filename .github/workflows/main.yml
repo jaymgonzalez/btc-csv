@@ -21,6 +21,8 @@ jobs:
           python-version: '3.9'
           cache: 'pip'
       - run: pip install -r requirements.txt
+      - name: Run download data from bybit
+        run: python download_data_bybit.py
       - name: Run main script
         run: python main.py
       - name: Run bybit script
