@@ -43,7 +43,7 @@ def HTTP_Request(endPoint,method,payload,Info):
         response = httpClient.request(method, url+endPoint, headers=headers, data=payload)
     else:
         response = httpClient.request(method, url+endPoint+"?"+payload, headers=headers)
-    print(Info + " Response Time : " + str(response.elapsed))
+    # print(Info + " Response Time : " + str(response.elapsed))
     text = json.loads(response.text)
     if response.status_code == 200 and text['retMsg'] == 'OK':
         return text
@@ -105,3 +105,10 @@ def closePosition(symbol='BTCUSDT'):
     params='{"category":"linear","symbol":"' + symbol + '","orderType":"Market","qty":"' + qty + '","reduceOnly":"true","side":"' + side + '"}';
     HTTP_Request(endpoint,method,params,"Close")
     print(f'Position closed! symbol: {symbol}, side: {side}, qty: {qty}')
+
+def getHourlyData(symbol='BTCUSDT'):
+    endpoint="/v5/market/kline"
+    method="GET"
+    params=f'category=linear&symbol={symbol}&interval=60';
+    response = HTTP_Request(endpoint,method,params,"price")
+    return response['result']['list']

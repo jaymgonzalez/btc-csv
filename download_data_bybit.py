@@ -1,16 +1,39 @@
-import configparser
-import os
-import datetime
-import time
+import pandas as pd
+import pandas_ta as ta
+from bybit_api_functions import getHourlyData
+from main import addPosition
+# import datetime
+# import time
 
-one_month_ago = datetime.datetime.now() - datetime.timedelta(hours=199)
-epoch_time = int(time.mktime(one_month_ago.timetuple()))
 
+# total_hours = datetime.datetime.now() - datetime.timedelta(hours=699)
+# epoch_time = int(time.mktime(total_hours.timetuple())) * 1000
 
-config = configparser.ConfigParser()
-config.read('config.ini')
+# print(epoch_time)
 
-api_key = config.get('BYBIT', 'API_KEY', fallback='') or os.environ.get("API_KEY")
-api_secret = config.get('BYBIT', 'API_SECRET', fallback='') or os.environ.get("API_SECRET")
-endpoint = 'https://api.bybit.com'
+data = getHourlyData()
 
+df = pd.DataFrame(data, columns=['open_time','open','high','low','close','vol','turn_over'])
+
+df = df[["open_time","open", "high", "low", "close"]]
+
+df["open_time"] = pd.to_datetime(df["open_time"], unit="ms")
+
+df.set_index("open_time", inplace=True)
+
+df = df.iloc[::-1]
+
+df["open"] = df.open.astype(float)
+df["high"] = df.high.astype(float)
+df["low"] = df.low.astype(float)
+df["close"] = df.close.astype(float)
+
+## take the rolling atr so the yaxis doesn't shake too much
+df["atr"] = ta.atr(high=df.high, low=df.low, close=df.close)
+df["atr"] = df.atr.rolling(window=30).mean()
+
+df.to_csv('1h_bybit.csv')
+
+addPosition('1h_bybit.csv')
+
+print(df)

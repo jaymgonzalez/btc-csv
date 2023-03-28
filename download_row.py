@@ -30,7 +30,8 @@ if str(df.index[-1]) != str(row.index[0]):
   new_df["atr"] = ta.atr(high=new_df.high, low=new_df.low, close=new_df.close)
   new_df["atr"] = new_df.atr.rolling(window=30).mean()
   
-  new_df.to_csv('1h.csv')
+  new_df.to_csv('1h_concat.csv')
+
 
 
 
