@@ -43,7 +43,7 @@ def HTTP_Request(endPoint,method,payload,Info):
         response = httpClient.request(method, url+endPoint, headers=headers, data=payload)
     else:
         response = httpClient.request(method, url+endPoint+"?"+payload, headers=headers)
-    # print(Info + " Response Time : " + str(response.elapsed))
+    print(Info + " Response Time : " + str(response.elapsed))
     text = json.loads(response.text)
     if response.status_code == 200 and text['retMsg'] == 'OK':
         return text
@@ -51,7 +51,7 @@ def HTTP_Request(endPoint,method,payload,Info):
         raise ValueError(text)
 
 def genSignature(payload):
-    param_str= str(time_stamp) + api_key + recv_window + payload
+    param_str= str(time_stamp) + api_key + recv_window + str(payload)
     hash = hmac.new(bytes(api_secret, "utf-8"), param_str.encode("utf-8"),hashlib.sha256)
     signature = hash.hexdigest()
     return signature
