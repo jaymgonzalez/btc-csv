@@ -45,8 +45,9 @@ def HTTP_Request(endPoint,method,payload,Info):
         response = httpClient.request(method, url+endPoint+"?"+payload, headers=headers)
     # print(url+endPoint+"?"+payload)
     print(Info + " Response Time : " + str(response.elapsed))
+    # print(response.text)
     text = json.loads(response.text)
-    if response.status_code == 200 and (text['retMsg'] == 'OK' or text['retMsg'] == 'success'):
+    if response.status_code == 200 and text['retMsg'] == 'OK':
         return text
     else: 
         raise ValueError(text)
@@ -58,11 +59,12 @@ def genSignature(payload):
     return signature
 
 def walletBalance(coin='USDT',accType='CONTRACT'):
-    endpoint="/v5/asset/transfer/query-account-coin-balance"
+    endpoint="/v5/account/wallet-balance"
     method="GET"
     params=f'accountType={accType}&coin={coin}';
     response = HTTP_Request(endpoint,method,params,"Balance")
-    return response['result']['balance']['walletBalance']
+    # print(response['result']['list'][0])
+    return response['result']['list'][0]['coin'][0]['walletBalance']
 
 def getLatestPrice(symbol='BTCUSDT'):
     endpoint="/v5/market/kline"
@@ -109,3 +111,5 @@ def closePosition(symbol='BTCUSDT'):
 
 # createOrder('Sell')
 # closePosition()
+
+walletBalance()
