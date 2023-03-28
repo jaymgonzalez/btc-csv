@@ -23,6 +23,11 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Run download data from bybit
         run: python download_data_bybit.py
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+          API_SECRET: ${{ secrets.API_SECRET }}
+          TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
+          TEST_API_SECRET: ${{ secrets.TEST_API_SECRET }}
       - name: Run main script
         run: python main.py
       - name: Run bybit script

@@ -50,8 +50,6 @@ def HTTP_Request(endPoint,method,payload,Info):
     else: 
         raise ValueError(text)
 
-print(api_key)
-
 def genSignature(payload):
     param_str= str(time_stamp) + api_key + recv_window + payload
     hash = hmac.new(bytes(api_secret, "utf-8"), param_str.encode("utf-8"),hashlib.sha256)
