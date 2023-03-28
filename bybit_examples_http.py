@@ -40,10 +40,11 @@ def HTTP_Request(endPoint,method,payload,Info):
     # print(url+endPoint+"?"+payload)
     print(Info + " Response Time : " + str(response.elapsed))
     # print(response.text)
-    if response.status_code == 200:
-        return response.text
+    text = json.loads(response.text)
+    if response.status_code == 200 and (text['retMsg'] == 'OK' or text['retMsg'] == 'success'):
+        return text
     else: 
-        ValueError(response.txt)
+        ValueError(text)
 
 def genSignature(payload):
     param_str= str(time_stamp) + test_api_key + recv_window + payload
@@ -65,7 +66,7 @@ def walletBalance(coin='USDT',accType='CONTRACT'):
     endpoint="/v5/asset/transfer/query-account-coin-balance"
     method="GET"
     params=f'accountType={accType}&coin={coin}';
-    response = json.loads(HTTP_Request(endpoint,method,params,"Balance"))
+    response = HTTP_Request(endpoint,method,params,"Balance")
     return response['result']['balance']['walletBalance']
 
 # data = walletBalance()
@@ -75,17 +76,17 @@ def openPosition(symbol='BTCUSDT'):
     endpoint="/v5/position/list"
     method="GET"
     params=f'category=linear&symbol={symbol}';
-    response = json.loads(HTTP_Request(endpoint,method,params,"Orders"))
+    response = HTTP_Request(endpoint,method,params,"Orders")
     # print(response['result']['balance']['walletBalance'])
     print(response)
 
-openPosition()
+# openPosition()
 
 def openPositionQty(symbol='BTCUSDT'):
     endpoint="/v5/order/history"
     method="GET"
     params=f'category=linear&symbol={symbol}';
-    response = json.loads(HTTP_Request(endpoint,method,params,"qty"))
+    response = HTTP_Request(endpoint,method,params,"qty")
     # print(response['result']['list'][0]['orderLinkId'])
     return response['result']['list'][0]['qty']
 
@@ -114,7 +115,7 @@ def getLatestPrice(symbol='BTCUSDT'):
     endpoint="/v5/market/kline"
     method="GET"
     params=f'category=linear&symbol={symbol}&interval=1&limit=1';
-    response = json.loads(HTTP_Request(endpoint,method,params,"price"))
+    response = HTTP_Request(endpoint,method,params,"price")
     # print(response['result']['list'][0]['orderLinkId'])
     return response['result']['list'][0][4]
 
