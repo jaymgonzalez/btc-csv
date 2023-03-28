@@ -106,9 +106,9 @@ def closePosition(symbol='BTCUSDT'):
     HTTP_Request(endpoint,method,params,"Close")
     print(f'Position closed! symbol: {symbol}, side: {side}, qty: {qty}')
 
-def getHourlyData(symbol='BTCUSDT'):
+def getHourlyData(startTime=int(time.time())*1000, symbol='BTCUSDT'):
     endpoint="/v5/market/kline"
     method="GET"
-    params=f'category=linear&symbol={symbol}&interval=60';
-    response = HTTP_Request(endpoint,method,params,"price")
+    params=f'category=linear&symbol={symbol}&interval=60&start={startTime}';
+    response = HTTP_Request(endpoint,method,params,"data")
     return response['result']['list']

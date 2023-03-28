@@ -1,4 +1,5 @@
 import pandas as pd
+from main import addPosition
 from bybit_api_functions import openPosition, closePosition, createOrder
 
 def getCsvPosition(csvPath='1h.csv'):
@@ -11,6 +12,9 @@ def getCsvPosition(csvPath='1h.csv'):
     
     # Return the last value
     return 'Buy' if last_value == 1 else 'Sell'
+
+addPosition('1h.csv')
+addPosition('1h_bybit.csv')
 
 csvPositionSide = getCsvPosition()
 openPositionSide, _ = openPosition()

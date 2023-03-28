@@ -33,7 +33,3 @@ def addPosition(csvPath):
             df.iloc[i, df.columns.get_loc('position')] = prev_pos
 
     df.to_csv(csvPath)
-
-    # print(df.tail(50))
-
-addPosition('1h.csv')
