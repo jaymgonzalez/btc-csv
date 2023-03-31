@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo 'dig +short myip.opendns.com @resolver1.opendns.com'
+
 dir=/home/jay-server-ventas/workspace/bot
 
 cd $dir
