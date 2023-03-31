@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo 'dig +short myip.opendns.com @resolver1.opendns.com'
+ip=$(dig +short myip.opendns.com @resolver1.opendns.com)
 
 dir=/home/jay-server-ventas/workspace/bot
 
@@ -18,7 +18,7 @@ git pull
 python download_data.py
 
 # Create a commit with a message indicating the changes made
-git commit -am "Automated commit $(date)"
+git commit -am "Automated commit $(date) $ip"
 
 # Push the changes to GitHub
 git push origin main
