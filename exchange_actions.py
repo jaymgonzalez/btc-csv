@@ -15,7 +15,7 @@ def getCsvPosition(csvPath="1h.csv"):
     return "Buy" if last_value == 1 else "Sell"
 
 
-addPosition("1h.csv")
+# addPosition("1h.csv")
 # addPosition("1h_bybit.csv")
 addPosition("15m_bybit.csv")
 
