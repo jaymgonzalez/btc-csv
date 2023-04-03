@@ -6,8 +6,12 @@ from scipy.signal import find_peaks
 def addPosition(csvPath):
     df = pd.read_csv(csvPath, index_col=0)
 
+<<<<<<< HEAD
     df["close_smooth"] = savgol_filter(df.close, 49, 4)
     df["close_smooth"] = round(df.close_smooth, 2)
+=======
+    df["close_smooth"] = round(savgol_filter(df.close, 49, 4), 2)
+>>>>>>> 53876ce98255262b2b5c54369e4c70888578b813
 
     atr = df.atr.iloc[-1]
 
