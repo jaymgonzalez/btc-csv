@@ -7,6 +7,7 @@ def addPosition(csvPath):
     df = pd.read_csv(csvPath, index_col=0)
 
     df["close_smooth"] = savgol_filter(df.close, 49, 4)
+    df["close_smooth"] = round(df.close_smooth, 2)
 
     atr = df.atr.iloc[-1]
 
