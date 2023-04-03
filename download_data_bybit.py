@@ -59,7 +59,7 @@ def tidyData(data):
 
     ## take the rolling atr so the yaxis doesn't shake too much
     df["atr"] = ta.atr(high=df.high, low=df.low, close=df.close)
-    df["atr"] = round(df.atr.rolling(window=30).mean(), 3)
+    df["atr"] = round(df.atr.rolling(window=16).mean(), 3)
 
     df.set_index("open_time", inplace=True)
 

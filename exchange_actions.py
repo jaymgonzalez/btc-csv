@@ -2,28 +2,33 @@ import pandas as pd
 from main import addPosition
 from bybit_api_functions import openPosition, closePosition, createOrder
 
+atr_threshold = 70
 
-def getCsvPosition(csvPath="1h.csv"):
+
+def getLastTickData(csvPath="15m_bybit.csv"):
     df = pd.read_csv(csvPath)
 
-    num_rows, num_cols = df.shape
+    pos = df.position.iloc[-1]
 
-    # Get the value of the last column and last row
-    last_value = df.iloc[num_rows - 1, num_cols - 1]
+    atr = df.atr.iloc[-1]
 
     # Return the last value
-    return "Buy" if last_value == 1 else "Sell"
+    return "Buy" if pos == 1 else "Sell", atr
 
 
-# addPosition("1h.csv")
-# addPosition("1h_bybit.csv")
+def positionManagement():
+
+    csv_pos, atr = getLastTickData()
+    openPositionSide, _ = openPosition()
+
+    if openPositionSide == 0 and atr > atr_threshold:
+        createOrder(csv_pos)
+    elif openPositionSide != csv_pos and atr > atr_threshold:
+        closePosition()
+        createOrder(csv_pos)
+    elif openPositionSide != 0 and atr < atr_threshold:
+        closePosition()
+
+
 addPosition("15m_bybit.csv")
-
-csvPositionSide = getCsvPosition("15m_bybit.csv")
-openPositionSide, _ = openPosition()
-
-if openPositionSide == 0:
-    createOrder(csvPositionSide)
-elif openPositionSide != csvPositionSide:
-    closePosition()
-    createOrder(csvPositionSide)
+positionManagement()
