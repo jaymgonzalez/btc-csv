@@ -11,10 +11,10 @@ def addPosition(csvPath):
     atr = df.atr.iloc[-1]
 
     peaks_idx, peaks_dict = find_peaks(
-        df.close_smooth, distance=15, width=3, prominence=atr * 1.5
+        df.close_smooth, distance=15, width=3, prominence=atr * 2
     )
     troughs_idx, troughs_dict = find_peaks(
-        -1 * df.close_smooth, distance=15, width=3, prominence=atr * 1.5
+        -1 * df.close_smooth, distance=15, width=3, prominence=atr * 2
     )
 
     print(peaks_dict)
