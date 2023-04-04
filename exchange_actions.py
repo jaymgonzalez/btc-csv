@@ -1,5 +1,4 @@
 import pandas as pd
-from main import addPosition
 from bybit_api_functions import openPosition, closePosition, createOrder
 
 atr_threshold = 70
@@ -30,5 +29,4 @@ def positionManagement():
         closePosition()
 
 
-addPosition("15m_bybit.csv")
 positionManagement()

@@ -1,6 +1,8 @@
 import pandas as pd
 import pandas_ta as ta
-from bybit_api_functions import getKlineData
+from bybit_api_functions import getKlineData, getTickData
+from scipy.signal import savgol_filter
+from scipy.signal import find_peaks
 import time
 
 
@@ -49,7 +51,14 @@ def downloadData(number_of_entries=400, interval=15, row=False):
     df.drop_duplicates("open_time", inplace=True, keep="last")
     df.set_index("open_time", inplace=True)
 
+    return df
+
+
+def createDf(interval=15, row=True):
+    df = downloadData(interval=interval, row=row)
     df = calculate_atr(df)
+    df = addPosition(df)
+    df = addOpenInterestFundingRate(df)
     print(df)
     df.to_csv(f"{interval}m_bybit.csv")
 
@@ -65,6 +74,9 @@ def tidyData(data):
     df["high"] = df.high.astype(float)
     df["low"] = df.low.astype(float)
     df["close"] = df.close.astype(float)
+    df["position"] = 0
+    df["oi"] = 0
+    df["funding_rate"] = 0
 
     return df
 
@@ -78,5 +90,52 @@ def calculate_atr(df, length=16):
     return df
 
 
-# downloadData()
-downloadData(number_of_entries=2, row=True)
+def addOpenInterestFundingRate(df):
+    # df = df.iloc[-1]["OI", "FundingRate"] = getTickData()
+    # oi, fund_rate = getTickData()
+    # oi = getTickData()
+
+    # print(df.iloc[-1])
+
+    # print(oi, fund_rate)
+    # print(oi)
+
+    new_data = getTickData()
+    df.iloc[-1, df.columns.get_loc("oi")] = new_data[0]
+    df.iloc[-1, df.columns.get_loc("funding_rate")] = new_data[1]
+    return df
+
+
+def addPosition(df):
+
+    df["close_smooth"] = savgol_filter(df.close, 49, 8)
+    df["close_smooth"] = round(df.close_smooth, 2)
+
+    atr = df.atr.iloc[-1]
+
+    peaks_idx, peaks_dict = find_peaks(
+        df.close_smooth, distance=15, width=3, prominence=atr * 1.3
+    )
+    troughs_idx, troughs_dict = find_peaks(
+        -1 * df.close_smooth, distance=15, width=3, prominence=atr * 1.3
+    )
+
+    print(peaks_dict)
+    print(troughs_dict)
+
+    # Set position values based on long and short signals
+    df["position"].iloc[peaks_idx] = -1
+    df["position"].iloc[troughs_idx] = 1
+
+    # Adjust the position column to hold the most recent position until there is a signal to go in the other direction
+    prev_pos = 0
+    for i in range(len(df)):
+        if df.iloc[i]["position"] != 0:
+            prev_pos = df.iloc[i]["position"]
+        else:
+            df.iloc[i, df.columns.get_loc("position")] = prev_pos
+
+    return df
+
+
+createDf()
