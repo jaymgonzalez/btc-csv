@@ -155,10 +155,13 @@ def closePosition(symbol="BTCUSDT"):
 
 
 def getKlineData(
-    startTime=int(time.time() - 200 * 60 * 60) * 1000, symbol="BTCUSDT", interval="60"
+    startTime=int(time.time()) * 1000,
+    symbol="BTCUSDT",
+    interval="60",
+    limit="200",
 ):
     endpoint = "/v5/market/kline"
     method = "GET"
-    params = f"category=linear&symbol={symbol}&interval={interval}&start={startTime}"
+    params = f"category=linear&symbol={symbol}&interval={interval}&start={startTime}&limit={limit}"
     response = HTTP_Request(endpoint, method, params, "data", False)
     return response["result"]["list"]
