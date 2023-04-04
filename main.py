@@ -22,8 +22,8 @@ def addPosition(csvPath):
     print(troughs_dict)
 
     # Create a new column in the DataFrame called "position" if not existent
-    if "position" not in df.columns:
-        df["position"] = 0
+    # if "position" not in df.columns:
+    df["position"] = 0
 
     # Set position values based on long and short signals
     df["position"].iloc[peaks_idx] = -1
