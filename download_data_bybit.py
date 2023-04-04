@@ -58,8 +58,10 @@ def tidyData(data):
     df["close"] = df.close.astype(float)
 
     ## take the rolling atr so the yaxis doesn't shake too much
-    df["atr"] = ta.atr(high=df.high, low=df.low, close=df.close)
-    df["atr"] = round(df.atr.rolling(window=16).mean(), 3)
+    df["atr"] = ta.atr(
+        high=df.high, low=df.low, close=df.close, length=16, mamode="WMA"
+    )
+    df["atr"] = round(df.atr, 2)
 
     df.set_index("open_time", inplace=True)
 
