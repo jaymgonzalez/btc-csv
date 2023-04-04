@@ -1,31 +1,10 @@
 import pandas as pd
 import pandas_ta as ta
-from binance.client import Client
+from download_data_bybit import tidyData
+from bybit_api_functions import getKlineData
 
-client = Client()
+data = getKlineData(interval="15")
 
-# BTC
-klines = client.get_historical_klines(
-    "BTCUSDT", Client.KLINE_INTERVAL_1HOUR, "1 hour ago UTC"
-)
-
-row = pd.DataFrame(
-    klines,
-    columns=[
-        "open_time",
-        "open",
-        "high",
-        "low",
-        "close",
-        "vol",
-        "close_time",
-        "quote_vol",
-        "trades",
-        "taker_base_vol",
-        "taker_quote_vol",
-        "ignore",
-    ],
-)
 
 row = row[["open_time", "open", "high", "low", "close"]]
 
