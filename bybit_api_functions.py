@@ -165,3 +165,15 @@ def getKlineData(
     params = f"category=linear&symbol={symbol}&interval={interval}&start={startTime}&limit={limit}"
     response = HTTP_Request(endpoint, method, params, "data", False)
     return response["result"]["list"]
+
+
+def getTickData(
+    symbol="BTCUSDT",
+    category="linear",
+):
+    endpoint = "/v5/market/tickers"
+    method = "GET"
+    params = f"category=linear&symbol={symbol}&category={category}"
+    response = HTTP_Request(endpoint, method, params, "data", False)
+    data = response["result"]["list"][0]
+    return data["openInterest"], data["fundingRate"]
