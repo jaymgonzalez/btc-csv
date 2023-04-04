@@ -6,16 +6,16 @@ from scipy.signal import find_peaks
 def addPosition(csvPath):
     df = pd.read_csv(csvPath, index_col=0)
 
-    df["close_smooth"] = savgol_filter(df.close, 49, 4)
+    df["close_smooth"] = savgol_filter(df.close, 49, 8)
     df["close_smooth"] = round(df.close_smooth, 2)
 
     atr = df.atr.iloc[-1]
 
     peaks_idx, peaks_dict = find_peaks(
-        df.close_smooth, distance=15, width=3, prominence=atr * 2
+        df.close_smooth, distance=15, width=3, prominence=atr * 1.3
     )
     troughs_idx, troughs_dict = find_peaks(
-        -1 * df.close_smooth, distance=15, width=3, prominence=atr * 2
+        -1 * df.close_smooth, distance=15, width=3, prominence=atr * 1.3
     )
 
     print(peaks_dict)
