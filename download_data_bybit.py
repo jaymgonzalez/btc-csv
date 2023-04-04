@@ -35,25 +35,23 @@ def downloadData(number_of_entries=400, interval=15, row=False):
 
     df = tidyData(data)
 
-    # print(df)
-
     if row:
-        df["open_time"] = pd.to_datetime(df["open_time"], unit="ms")
         csv_df = pd.read_csv(f"{interval}m_bybit.csv", index_col=0)
-        csv_df.reset_index(inplace=True, drop=True)
-        csv_df["open_time"] = pd.to_datetime(csv_df["open_time"], unit="ms")
+        csv_df.reset_index(inplace=True)
+        csv_df["open_time"] = pd.to_datetime(csv_df["open_time"])
         csv_df["open_time"] = csv_df["open_time"].apply(
             lambda x: int(x.timestamp() * 1000)
         )
-        # print(csv_df)
         df = pd.concat([csv_df, df])
 
-    # print(type(df["open_time"]))
-    df.drop_duplicates("open_time", inplace=True)
+    df["open_time"] = pd.to_datetime(df["open_time"], unit="ms")
     df.sort_values("open_time", inplace=True)
+    df.drop_duplicates("open_time", inplace=True, keep="last")
     df.set_index("open_time", inplace=True)
+
+    df = calculate_atr(df)
     print(df)
-    # df.to_csv(f"{interval}m_bybit.csv")
+    df.to_csv(f"{interval}m_bybit.csv")
 
 
 def tidyData(data):
@@ -71,17 +69,9 @@ def tidyData(data):
     return df
 
 
-# def drop_na_duplicates(df, column="open_time"):
-#     # Remove duplicates and short df
-
-#     # print(df)
-#     return df
-
-
-def calculate_atr(df):
-    ## take the rolling atr so the yaxis doesn't shake too much
+def calculate_atr(df, length=16):
     df["atr"] = ta.atr(
-        high=df.high, low=df.low, close=df.close, length=16, mamode="WMA"
+        high=df.high, low=df.low, close=df.close, length=length, mamode="WMA"
     )
     df["atr"] = round(df.atr, 2)
 
