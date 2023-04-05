@@ -167,13 +167,31 @@ def getKlineData(
     return response["result"]["list"]
 
 
-def getTickData(
+def getOpenInterest(
+    startTime=int(time.time()) * 1000,
     symbol="BTCUSDT",
-    category="linear",
+    interval="15",
+    interval_letter="min",  # could be h or d
+    limit="200",
 ):
-    endpoint = "/v5/market/tickers"
+    endpoint = "/v5/market/open-interest"
     method = "GET"
-    params = f"category=linear&symbol={symbol}&category={category}"
+    params = f"category=linear&symbol={symbol}&intervalTime={interval}{interval_letter}&start={startTime}&limit={limit}"
     response = HTTP_Request(endpoint, method, params, "data", False)
-    data = response["result"]["list"][0]
-    return data["openInterest"], data["fundingRate"]
+    return response["result"]["list"]
+
+
+def getFundingRate(
+    startTime=int(time.time()) * 1000,
+    symbol="BTCUSDT",
+    limit="200",
+):
+    endpoint = "/v5/market/funding/history"
+    method = "GET"
+    params = f"category=linear&symbol={symbol}&start={startTime}&limit={limit}"
+    response = HTTP_Request(endpoint, method, params, "data", False)
+    return response["result"]["list"]
+
+
+# getOpenInterest()
+# print(getFundingRate())
