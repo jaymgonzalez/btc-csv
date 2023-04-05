@@ -76,7 +76,6 @@ def tidyData(data):
     df["low"] = df.low.astype(float)
     df["close"] = df.close.astype(float)
     df["position"] = 0
-    df["funding_rate"] = 0
 
     return df
 
@@ -95,7 +94,7 @@ def addOpenInterest(df):
 
     data_dict = {}
     for item in data:
-        data_dict[item["timestamp"]] = item["openInterest"]
+        data_dict[item["timestamp"]] = round(float(item["openInterest"]), 2)
 
     new_df = pd.DataFrame.from_dict(data_dict, orient="index", columns=["oi"])
     new_df.index = pd.to_datetime(new_df.index, unit="ms")
@@ -112,7 +111,20 @@ def addOpenInterest(df):
 def addFundingRate(df):
     data = getFundingRate()
 
-    print(data)
+    data_dict = {}
+    for item in data:
+        data_dict[item["fundingRateTimestamp"]] = round(
+            float(item["fundingRate"]) * 100, 5
+        )
+
+    new_df = pd.DataFrame.from_dict(data_dict, orient="index", columns=["fr"])
+    new_df.index = pd.to_datetime(new_df.index, unit="ms")
+
+    df = df.merge(new_df, how="left", left_index=True, right_index=True)
+
+    df = df.rename(columns={"fr_y": "funding_rate"})
+    # df.drop("fr_x", axis=1, inplace=True)
+    df.fillna(method="ffill", inplace=True)
 
     return df
 
