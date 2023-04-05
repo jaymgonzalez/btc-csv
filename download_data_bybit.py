@@ -1,6 +1,6 @@
 import pandas as pd
 import pandas_ta as ta
-from bybit_api_functions import getKlineData, getTickData
+from bybit_api_functions import getKlineData, getOpenInterest, getFundingRate
 from scipy.signal import savgol_filter
 from scipy.signal import find_peaks
 import time
@@ -58,7 +58,7 @@ def createDf(interval=15, row=True):
     df = downloadData(interval=interval, row=row)
     df = calculate_atr(df)
     df = addPosition(df)
-    df = addOpenInterestFundingRate(df)
+    # df = addOpenInterest(df)
     print(df)
     df.to_csv(f"{interval}m_bybit.csv")
 
@@ -90,19 +90,18 @@ def calculate_atr(df, length=16):
     return df
 
 
-def addOpenInterestFundingRate(df):
-    # df = df.iloc[-1]["OI", "FundingRate"] = getTickData()
-    # oi, fund_rate = getTickData()
-    # oi = getTickData()
+def addOpenInterest(df):
+    data = getOpenInterest()
 
-    # print(df.iloc[-1])
+    data_dict = {}
+    for item in data:
+        data_dict[item["timestamp"]] = item["openInterest"]
 
-    # print(oi, fund_rate)
-    # print(oi)
+    new_df = pd.DataFrame.from_dict(data_dict, orient="index", columns=["oi"])
+    new_df["timestamp"] = pd.to_datetime(new_df["timestamp"], unit="ms")
 
-    new_data = getTickData()
-    df.iloc[-1, df.columns.get_loc("oi")] = new_data[0]
-    df.iloc[-1, df.columns.get_loc("funding_rate")] = new_data[1]
+    df = df.merge(new_df, how="left", left_index=True, right_index=True)
+
     return df
 
 
