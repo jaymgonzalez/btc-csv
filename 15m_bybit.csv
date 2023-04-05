@@ -1,4 +1,4 @@
-open_time,open,high,low,close,atr,close_smooth,position,funding_rate,oi,fr
+open_time,open,high,low,close,atr,close_smooth,position,funding_rate,oi,funding_rate
 2023-03-31 10:30:00,27909.6,27989.0,27888.6,27888.6,,27887.59,0,,,
 2023-03-31 10:45:00,27888.6,27912.3,27843.1,27869.1,,27889.58,0,,,
 2023-03-31 11:00:00,27869.1,27903.0,27853.1,27901.8,,27880.36,0,,,
