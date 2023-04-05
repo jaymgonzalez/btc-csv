@@ -58,11 +58,10 @@ def createDf(interval=15, row=True):
     df = downloadData(interval=interval, row=row)
     df = calculate_atr(df)
     df = addPosition(df)
-    # df.drop(df.columns[[8, 9, 10, 11, 12]], axis=1, inplace=True)
+    # df.drop(df.columns[[7, 8, 9, 10]], axis=1, inplace=True)
     df = addOpenInterest(df)
     df = addFundingRate(df)
-    print(df)
-    # df = df.rename(columns={"fr_y": "funding_rate"})
+    # print(df)
 
     df.to_csv(f"{interval}m_bybit.csv")
 
@@ -130,9 +129,10 @@ def addFundingRate(df):
 
     df = df.merge(new_df, how="left", left_index=True, right_index=True)
 
-    df = df.rename(columns={"fr_y": "funding_rate"})
+    df = df.rename(columns={"fr_y": "fr"})
     if "fr_x" in df:
         df.drop("fr_x", axis=1, inplace=True)
+
     df.fillna(method="ffill", inplace=True)
 
     return df
