@@ -6,7 +6,7 @@ from scipy.signal import find_peaks
 import time
 
 
-def getCustomData(number_of_entries=800, intervalInMinutes=60):
+def getCustomData(number_of_entries=800, intervalInMinutes=60, function=getKlineData):
     # Calculate the epoch time for n hours ago
     start_time = int(time.time() - number_of_entries * intervalInMinutes * 60) * 1000
 
@@ -16,7 +16,7 @@ def getCustomData(number_of_entries=800, intervalInMinutes=60):
     # Loop until we've retrieved all the entries
     while True:
         # Make the API request with the appropriate query parameters
-        data = getKlineData(start_time, interval=intervalInMinutes)
+        data = function(startTime=start_time, interval=intervalInMinutes)
 
         # Check if we received any new entries
         if len(data) == 1:
@@ -26,7 +26,10 @@ def getCustomData(number_of_entries=800, intervalInMinutes=60):
         all_entries.extend(data)
 
         # Update the starting time for the next batch
-        start_time = int(data[0][0])
+        if function == getOpenInterest:
+            start_time = int(data[0]["timestamp"])
+        else:
+            start_time = int(data[0][0])
 
     return all_entries
 
@@ -58,10 +61,8 @@ def createDf(interval=15, row=True):
     df = downloadData(interval=interval, row=row)
     df = calculate_atr(df)
     df = addPosition(df)
-    # df.drop(df.columns[[7, 8, 9, 10]], axis=1, inplace=True)
     df = addOpenInterest(df)
     df = addFundingRate(df)
-    # print(df)
 
     df.to_csv(f"{interval}m_bybit.csv")
 
@@ -92,7 +93,9 @@ def calculate_atr(df, length=16):
 
 
 def addOpenInterest(df):
-    data = getOpenInterest()
+    data = getCustomData(
+        number_of_entries=400, intervalInMinutes=15, function=getOpenInterest
+    )
 
     data_dict = {}
     for item in data:
@@ -103,12 +106,9 @@ def addOpenInterest(df):
 
     df = df.merge(new_df, how="left", left_index=True, right_index=True)
 
-    print(df)
-
     df = df.rename(columns={"oi_y": "oi"})
     if "oi_x" in df:
         df.drop("oi_x", axis=1, inplace=True)
-    # print(new_df)
 
     return df
 
