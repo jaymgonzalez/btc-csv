@@ -58,7 +58,8 @@ def createDf(interval=15, row=True):
     df = downloadData(interval=interval, row=row)
     df = calculate_atr(df)
     df = addPosition(df)
-    # df = addOpenInterest(df)
+    df = addOpenInterest(df)
+    df = addFundingRate(df)
     print(df)
     df.to_csv(f"{interval}m_bybit.csv")
 
@@ -75,7 +76,6 @@ def tidyData(data):
     df["low"] = df.low.astype(float)
     df["close"] = df.close.astype(float)
     df["position"] = 0
-    df["oi"] = 0
     df["funding_rate"] = 0
 
     return df
@@ -98,9 +98,21 @@ def addOpenInterest(df):
         data_dict[item["timestamp"]] = item["openInterest"]
 
     new_df = pd.DataFrame.from_dict(data_dict, orient="index", columns=["oi"])
-    new_df["timestamp"] = pd.to_datetime(new_df["timestamp"], unit="ms")
+    new_df.index = pd.to_datetime(new_df.index, unit="ms")
 
     df = df.merge(new_df, how="left", left_index=True, right_index=True)
+
+    df = df.rename(columns={"oi_y": "oi"})
+    df.drop("oi_x", axis=1, inplace=True)
+    # print(new_df)
+
+    return df
+
+
+def addFundingRate(df):
+    data = getFundingRate()
+
+    print(data)
 
     return df
 
