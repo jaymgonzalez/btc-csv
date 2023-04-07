@@ -176,7 +176,7 @@ def getOpenInterest(
 ):
     endpoint = "/v5/market/open-interest"
     method = "GET"
-    params = f"category=linear&symbol={symbol}&intervalTime={interval}{interval_letter}&start={startTime}&limit={limit}"
+    params = f"category=linear&symbol={symbol}&intervalTime={interval}{interval_letter}&startTime={startTime}&limit={limit}"
     response = HTTP_Request(endpoint, method, params, "data", False)
     return response["result"]["list"]
 
@@ -188,10 +188,10 @@ def getFundingRate(
 ):
     endpoint = "/v5/market/funding/history"
     method = "GET"
-    params = f"category=linear&symbol={symbol}&start={startTime}&limit={limit}"
+    params = f"category=linear&symbol={symbol}&startTime={startTime}&limit={limit}"
     response = HTTP_Request(endpoint, method, params, "data", False)
     return response["result"]["list"]
 
 
-# getOpenInterest()
+print(getOpenInterest(1680514308000))
 # print(getFundingRate())
