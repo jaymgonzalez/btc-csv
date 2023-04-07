@@ -58,10 +58,8 @@ def createDf(interval=15, row=True):
     df = downloadData(interval=interval, row=row)
     df = calculate_atr(df)
     df = addPosition(df)
-    # df.drop(df.columns[[7, 8, 9, 10]], axis=1, inplace=True)
     df = addOpenInterest(df)
     df = addFundingRate(df)
-    # print(df)
 
     df.to_csv(f"{interval}m_bybit.csv")
 
@@ -108,7 +106,6 @@ def addOpenInterest(df):
     df = df.rename(columns={"oi_y": "oi"})
     if "oi_x" in df:
         df.drop("oi_x", axis=1, inplace=True)
-    # print(new_df)
 
     return df
 
