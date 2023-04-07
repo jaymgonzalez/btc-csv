@@ -193,17 +193,13 @@ def getOpenInterest(
 
 
 def getFundingRate(
+    endTime=int(time.time()) * 1000,
     startTime=int(time.time()) * 1000,
     symbol="BTCUSDT",
     limit="200",
 ):
     endpoint = "/v5/market/funding/history"
     method = "GET"
-    params = f"category=linear&symbol={symbol}&startTime={startTime}&limit={limit}"
+    params = f"category=linear&symbol={symbol}&startTime={startTime}&limit={limit}&endTime={endTime}"
     response = HTTP_Request(endpoint, method, params, "funding", False)
     return response["result"]["list"]
-
-
-# print(getOpenInterest(1680514308000))
-# print(getFundingRate())
-# getOpenInterest(1680887659000)

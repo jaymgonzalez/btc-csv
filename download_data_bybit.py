@@ -13,6 +13,9 @@ def getCustomData(number_of_entries=800, intervalInMinutes=60, function=getKline
     # Initialize the list to store all the entries
     all_entries = []
 
+    if function == getFundingRate:
+        data = function(startTime=start_time)
+        return data
     # Loop until we've retrieved all the entries
     while True:
         # Make the API request with the appropriate query parameters
@@ -62,7 +65,7 @@ def createDf(interval=15, row=True):
     df = calculate_atr(df)
     df = addPosition(df)
     df = addOpenInterest(df)
-    # df = addFundingRate(df)
+    df = addFundingRate(df)
 
     df.to_csv(f"{interval}m_bybit.csv")
 
@@ -114,7 +117,9 @@ def addOpenInterest(df):
 
 
 def addFundingRate(df):
-    data = getFundingRate()
+    data = getCustomData(
+        number_of_entries=400, intervalInMinutes=15, function=getFundingRate
+    )
 
     data_dict = {}
     for item in data:
