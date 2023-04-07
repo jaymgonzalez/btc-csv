@@ -169,6 +169,7 @@ def getKlineData(
 
 def getOpenInterest(
     startTime=int(time.time()) * 1000,
+    cursor="",
     symbol="BTCUSDT",
     interval="15",
     interval_letter="min",  # could be h or d
@@ -176,8 +177,18 @@ def getOpenInterest(
 ):
     endpoint = "/v5/market/open-interest"
     method = "GET"
-    params = f"category=linear&symbol={symbol}&intervalTime={interval}{interval_letter}&startTime={startTime}&limit={limit}"
-    response = HTTP_Request(endpoint, method, params, "data", False)
+    params = f"category=linear&symbol={symbol}&intervalTime={interval}{interval_letter}&startTime={startTime}&limit={limit}&cursor={cursor}"
+    response = HTTP_Request(endpoint, method, params, "oi", False)
+    paginated_response = []
+    if response["result"]['nextPageCursor'] != '':
+        while response["result"]['nextPageCursor'] != '':
+            print(response["result"]["nextPageCursor"])
+            paginated_response.extend(response["result"]["list"])
+            cursor = response["result"]["nextPageCursor"]
+            params = f"category=linear&symbol={symbol}&intervalTime={interval}{interval_letter}&startTime={startTime}&limit={limit}&cursor={cursor}"
+            response = HTTP_Request(endpoint, method, params, "oi paginated", False)
+        return paginated_response
+        
     return response["result"]["list"]
 
 
@@ -189,9 +200,10 @@ def getFundingRate(
     endpoint = "/v5/market/funding/history"
     method = "GET"
     params = f"category=linear&symbol={symbol}&startTime={startTime}&limit={limit}"
-    response = HTTP_Request(endpoint, method, params, "data", False)
+    response = HTTP_Request(endpoint, method, params, "funding", False)
     return response["result"]["list"]
 
 
-print(getOpenInterest(1680514308000))
+# print(getOpenInterest(1680514308000))
 # print(getFundingRate())
+# getOpenInterest(1680887659000)

@@ -62,7 +62,7 @@ def createDf(interval=15, row=True):
     df = calculate_atr(df)
     df = addPosition(df)
     df = addOpenInterest(df)
-    df = addFundingRate(df)
+    # df = addFundingRate(df)
 
     df.to_csv(f"{interval}m_bybit.csv")
 
