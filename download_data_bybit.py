@@ -83,7 +83,6 @@ def tidyData(data):
     df["high"] = df.high.astype(float)
     df["low"] = df.low.astype(float)
     df["close"] = df.close.astype(float)
-    df["position"] = pd.Series(dtype="float64")
 
     return df
 
@@ -165,11 +164,15 @@ def addPosition(df):
     )
 
     # Set position values based on long and short signals
+    df["position"] = pd.Series(dtype="float64")
+
     df["position"].iloc[0] = 0
     df["position"].iloc[peaks_idx] = -1
     df["position"].iloc[troughs_idx] = 1
 
     df.fillna(method="ffill", inplace=True)
+
+    df["position"] = df["position"].astype("int")
 
     return df
 
