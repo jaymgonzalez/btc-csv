@@ -38,7 +38,6 @@ def getCustomData(number_of_entries=800, intervalInMinutes=60, function=getKline
 
 
 def downloadData(number_of_entries=400, interval=15, row=False):
-
     data = getCustomData(number_of_entries, interval)
 
     df = tidyData(data)
@@ -66,6 +65,7 @@ def createDf(interval=15, row=True):
     df = addPosition(df)
     df = addOpenInterest(df)
     df = addFundingRate(df)
+    df = addAdx(df)
 
     df.to_csv(f"{interval}m_bybit.csv")
 
@@ -143,8 +143,14 @@ def addFundingRate(df):
     return df
 
 
-def addPosition(df):
+def addAdx(df):
+    adx = ta.adx(df["high"], df["low"], df["close"], length=14).round(2)
+    df.update(adx)
 
+    return df
+
+
+def addPosition(df):
     df["close_smooth"] = savgol_filter(df.close, 49, 8)
     df["close_smooth"] = round(df.close_smooth, 2)
 
