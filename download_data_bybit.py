@@ -154,8 +154,7 @@ def addAdx(df):
 
 
 def addPosition(df):
-    df["close_smooth"] = savgol_filter(df.close, 49, 8)
-    df["close_smooth"] = round(df.close_smooth, 2)
+    df["close_smooth"] = savgol_filter(df.close, 49, 8).round(2)
 
     atr = df.atr.iloc[-1]
 
