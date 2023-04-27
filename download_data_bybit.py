@@ -165,9 +165,6 @@ def addPosition(df):
         -1 * df.close_smooth, distance=15, width=3, prominence=atr * 1.3
     )
 
-    print(peaks_dict)
-    print(troughs_dict)
-
     # Set position values based on long and short signals
     df["position"].iloc[peaks_idx] = -1
     df["position"].iloc[troughs_idx] = 1
