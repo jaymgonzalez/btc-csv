@@ -63,9 +63,11 @@ def createDf(interval=15, row=True):
     df = downloadData(interval=interval, row=row)
     df = calculate_atr(df)
     df = addPosition(df)
-    df = addOpenInterest(df)
-    df = addFundingRate(df)
+    # df = addOpenInterest(df)
+    # df = addFundingRate(df)
     df = addAdx(df)
+
+    # df = df.drop(["fr", "oi"], axis=1)
 
     df.to_csv(f"{interval}m_bybit.csv")
 
@@ -81,7 +83,7 @@ def tidyData(data):
     df["high"] = df.high.astype(float)
     df["low"] = df.low.astype(float)
     df["close"] = df.close.astype(float)
-    df["position"] = 0
+    df["position"] = pd.Series(dtype="float64")
 
     return df
 
@@ -89,8 +91,7 @@ def tidyData(data):
 def calculate_atr(df, length=16):
     df["atr"] = ta.atr(
         high=df.high, low=df.low, close=df.close, length=length, mamode="WMA"
-    )
-    df["atr"] = round(df.atr, 2)
+    ).round(2)
 
     return df
 
@@ -130,8 +131,6 @@ def addFundingRate(df):
     new_df = pd.DataFrame.from_dict(data_dict, orient="index", columns=["fr"])
     new_df.index = pd.to_datetime(new_df.index, unit="ms")
 
-    # print(new_df)
-
     df = df.merge(new_df, how="left", left_index=True, right_index=True)
 
     df = df.rename(columns={"fr_y": "fr"})
@@ -166,18 +165,14 @@ def addPosition(df):
     )
 
     # Set position values based on long and short signals
+    df["position"].iloc[0] = 0
     df["position"].iloc[peaks_idx] = -1
     df["position"].iloc[troughs_idx] = 1
 
-    # Adjust the position column to hold the most recent position until there is a signal to go in the other direction
-    prev_pos = 0
-    for i in range(len(df)):
-        if df.iloc[i]["position"] != 0:
-            prev_pos = df.iloc[i]["position"]
-        else:
-            df.iloc[i, df.columns.get_loc("position")] = prev_pos
+    df.fillna(method="ffill", inplace=True)
 
     return df
 
 
-createDf()
+if __name__ == "__main__":
+    createDf()
