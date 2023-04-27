@@ -145,7 +145,10 @@ def addFundingRate(df):
 
 def addAdx(df):
     adx = ta.adx(df["high"], df["low"], df["close"], length=14).round(2)
-    df.update(adx)
+    if "ADX_14" in df.columns:
+        df.update(adx)
+    else:
+        df = df.join(adx)
 
     return df
 
