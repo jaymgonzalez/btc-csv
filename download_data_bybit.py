@@ -179,7 +179,7 @@ def addPosition(df):
     # Set position values based on long and short signals
     df["position"] = pd.Series(dtype="float64")
 
-    # df["position"].iloc[0] = 0
+    df["position"].iloc[0] = 0
     df["position"].iloc[peaks_idx] = -1
     df["position"].iloc[troughs_idx] = 1
 

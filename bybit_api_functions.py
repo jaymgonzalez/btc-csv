@@ -164,6 +164,7 @@ def getKlineData(
     method = "GET"
     params = f"category=linear&symbol={symbol}&interval={interval}&start={startTime}&limit={limit}"
     response = HTTP_Request(endpoint, method, params, "data", False)
+    print(response)
     return response["result"]["list"]
 
 
@@ -180,15 +181,15 @@ def getOpenInterest(
     params = f"category=linear&symbol={symbol}&intervalTime={interval}{interval_letter}&startTime={startTime}&limit={limit}&cursor={cursor}"
     response = HTTP_Request(endpoint, method, params, "oi", False)
     paginated_response = []
-    if response["result"]['nextPageCursor'] != '':
-        while response["result"]['nextPageCursor'] != '':
+    if response["result"]["nextPageCursor"] != "":
+        while response["result"]["nextPageCursor"] != "":
             print(response["result"]["nextPageCursor"])
             paginated_response.extend(response["result"]["list"])
             cursor = response["result"]["nextPageCursor"]
             params = f"category=linear&symbol={symbol}&intervalTime={interval}{interval_letter}&startTime={startTime}&limit={limit}&cursor={cursor}"
             response = HTTP_Request(endpoint, method, params, "oi paginated", False)
         return paginated_response
-        
+
     return response["result"]["list"]
 
 
