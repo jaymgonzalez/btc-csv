@@ -64,6 +64,7 @@ def HTTP_Request(endPoint, method, payload, Info, isTest=True):
             method, url + endPoint + "?" + payload, headers=headers
         )
     print(Info + " Response Time : " + str(response.elapsed))
+    print(text)
     text = json.loads(response.text)
     if response.status_code == 200 and text["retMsg"] == "OK":
         return text
@@ -164,7 +165,6 @@ def getKlineData(
     method = "GET"
     params = f"category=linear&symbol={symbol}&interval={interval}&start={startTime}&limit={limit}"
     response = HTTP_Request(endpoint, method, params, "data", False)
-    print(response)
     return response["result"]["list"]
 
 
