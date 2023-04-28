@@ -64,8 +64,8 @@ def HTTP_Request(endPoint, method, payload, Info, isTest=True):
             method, url + endPoint + "?" + payload, headers=headers
         )
     print(Info + " Response Time : " + str(response.elapsed))
-    print(text)
     text = json.loads(response.text)
+    print(text)
     if response.status_code == 200 and text["retMsg"] == "OK":
         return text
     else:
