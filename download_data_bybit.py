@@ -67,7 +67,7 @@ def createDf(interval=15, row=True):
     # df = addFundingRate(df)
     df = addAdx(df)
 
-    # df = df.drop(["fr", "oi"], axis=1)
+    # df = df.drop(["ATC_change"], axis=1)
 
     df.to_csv(f"{interval}m_bybit.csv")
 
@@ -148,6 +148,19 @@ def addAdx(df):
     else:
         df = df.join(adx)
 
+    df["ADX_change"] = (df["DMP_14"] - df["DMN_14"]).round(2)
+
+    mean_change = df["ADX_change"].mean()
+    std_change = df["ADX_change"].std()
+
+    print(mean_change, std_change)
+
+    df["ADX_zscore"] = (
+        df["ADX_change"].apply(lambda x: (x - mean_change) / std_change).round(2)
+    )
+
+    # df["PTC_change"] = df["ADX_change"].pct_change(periods=5).round(2)
+
     return df
 
 
@@ -166,7 +179,7 @@ def addPosition(df):
     # Set position values based on long and short signals
     df["position"] = pd.Series(dtype="float64")
 
-    df["position"].iloc[0] = 0
+    # df["position"].iloc[0] = 0
     df["position"].iloc[peaks_idx] = -1
     df["position"].iloc[troughs_idx] = 1
 
